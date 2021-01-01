@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "cd ./server && nodemon server.js",
-    "client": "cd ./client && npm start",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "client": "cd ./client-folder && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client-folder\""
   },
   "author": "",
   "license": "ISC",
