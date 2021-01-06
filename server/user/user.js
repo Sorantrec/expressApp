@@ -39,7 +39,7 @@ router.post('/users', (req, res) => {
   })
 })
 
-router.put('/users:id', (req, res) => {
+router.put('/users/:id', (req, res) => {
   User.findByIdAndUpdate(req.body.id, req.body, (err, docs) => {
     if (err) {
       console.log(`Errors: ${err}`);

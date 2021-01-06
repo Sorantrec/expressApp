@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import '../generalStyles/general.scss';
 import moduleStyles from './App.module.scss';
 import axios from 'axios';
+import gapiService from './../../services/service';
 
 const App = () => {
   const [user, setUser] = useState({});
@@ -9,13 +10,13 @@ const App = () => {
   const [userId, setUserId] = useState(false);
 
   useEffect(() => {
-    if (window.gapi) {
+    gapiService(() => {
       window.gapi.load('auth2', () => {
         this.auth2 = window.gapi.auth2.init({
           client_id: '928833285884-v6eiobnaf4r33oombmfss6ok3260k2a4.apps.googleusercontent.com',
         });
       });
-    }
+    })
   }, []);
 
   useEffect(() => {
@@ -38,28 +39,23 @@ const App = () => {
   useEffect(() => {
     if (userId) {
       const updatedUser = { ...user, id: userId };
-      axios.put(`http://localhost:5000/users:${userId}`, updatedUser)
+      axios.put(`http://localhost:5000/users/:${userId}`, updatedUser)
         .then((res) => {
           validateRef.current.textContent = res.data;
         })
-        .catch((err) => {
-          console.log(`Errors: ${err}`);
-        })
+        .catch((err) => console.log(`Errors: ${err}`))
     }
     else {
       axios.post('http://localhost:5000/users', user)
         .then((res) => {
           validateRef.current.textContent = res.data;
         })
-        .catch((err) => {
-          console.log(`Errors: ${err}`);
-        })
+        .catch((err) => console.log(`Errors: ${err}`))
     }
   }, [userId])
 
   const signIn = () => {
-    if (window.gapi) {
-      const GoogleAuth = window.gapi.auth2.getAuthInstance();
+    gapiService((GoogleAuth) => {
       GoogleAuth.signIn(
         {
           scope: 'profile email',
@@ -77,24 +73,19 @@ const App = () => {
           userAvatar
         })
       })
-        .catch((err) => {
-          console.log(`Errors: ${err}`);
-        })
-    }
+        .catch((err) => console.log(`Errors: ${err}`))
+    })
   }
 
   const signOut = () => {
-    if (window.gapi) {
-      const GoogleAuth = window.gapi.auth2.getAuthInstance();
+    gapiService((GoogleAuth) => {
       GoogleAuth.signOut().then(function () {
         setUser({});
         setUserId(false);
         validateRef.current.textContent = 'User signed out';
       })
-        .catch((err) => {
-          console.log(`Errors: ${err}`);
-        })
-    }
+        .catch((err) => console.log(`Errors: ${err}`))
+    })
   }
   return (
     <div className={moduleStyles.container}>
